@@ -153,6 +153,31 @@ async def get_one_page_flats(flat_soup: BeautifulSoup, extra_info: dict) -> List
     return one_page_flats
 
 
+def get_extra_info(soup: BeautifulSoup) -> dict:
+    extra_info = dict()
+    city_list, region_list, subway_list, address_list = list(), list(), list(), list()
+    flats = soup.select("div.wrap_desc")
+
+    for flat in flats:
+        city_list.append(flat.select_one('a[data-level="city"]').text.strip())
+        address_list.append(flat.select_one("div.tit > a.bold").text.strip())
+        try:
+            region_list.append(flat.select('a[data-level="area"]')[-1].text.strip())
+        except IndexError:
+            region_list.append(None)
+        if flat.select('a[data-level="metro"]'):
+            subway_list.append(flat.select_one('a[data-level="metro"]').text.strip())
+        else:
+            subway_list.append(None)
+
+    extra_info["city"] = city_list
+    extra_info["region"] = region_list
+    extra_info["subway"] = subway_list
+    extra_info["address"] = address_list
+
+    return extra_info
+
+
 def write_titles_for_flats_csv() -> None:
     with open("test.csv", mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
