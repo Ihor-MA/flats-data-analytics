@@ -110,6 +110,39 @@ async def get_response_with_retry(
     return httpx.Response(status_code=503)
 
 
+async def get_one_page_flats(flat_soup: BeautifulSoup, extra_info: dict) -> List[Flat]:
+    detailed_flat_page_full_links = get_detailed_links_from_one_page(flat_soup)
+    one_page_flats = []
+    counter = 0
+
+    async with httpx.AsyncClient(
+        timeout=10, headers=headers, follow_redirects=True
+    ) as client:
+        tasks = [
+            get_response_with_retry(client, link)
+            for link in detailed_flat_page_full_links
+        ]
+        responses = await asyncio.gather(*tasks)
+
+        for response in responses:
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.content, "html.parser")
+                one_page_flats.append(
+                    parse_single_flat(
+                        soup,
+                        extra_info["city"][counter],
+                        extra_info["region"][counter],
+                        extra_info["subway"][counter],
+                        extra_info["address"][counter]
+                    )
+                )
+                counter += 1
+            else:
+                continue
+
+    return one_page_flats
+
+
 def write_titles_for_flats_csv() -> None:
     with open("test.csv", mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
