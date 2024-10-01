@@ -88,6 +88,16 @@ def parse_single_flat(detailed_page_soup: BeautifulSoup, city: str, region: str,
     return flat
 
 
+async def get_num_pages(client: httpx.AsyncClient) -> int:
+    page = await client.get(URL)
+    pages_soup = BeautifulSoup(page.content, "html.parser")
+
+    if not pages_soup.select(".pagerMobileScroll"):
+        return 1
+
+    return int(pages_soup.select(".pagerMobileScroll > a")[-1].text)
+
+
 def get_detailed_links_from_one_page(flat_soup: BeautifulSoup) -> List[str]:
     detailed_flat_pages_part_links = flat_soup.select(".realty-link")
 
