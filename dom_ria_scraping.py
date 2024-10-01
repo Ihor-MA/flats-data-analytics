@@ -1,4 +1,5 @@
 import asyncio
+import csv
 from dataclasses import dataclass
 from typing import Optional
 
@@ -16,6 +17,26 @@ class Flat:
     region: Optional[str] = None
     subway: Optional[str] = None
     apartment_complex: Optional[str] = None
+
+
+def write_titles_for_flats_csv() -> None:
+    with open("test.csv", mode="w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(
+            [
+                "city",
+                "region",
+                "address",
+                "price",
+                "price_for_square_metre",
+                "total_area",
+                "floor",
+                "num_of_floors",
+                "num_of_rooms",
+                "subway",
+                "apartment_complex",
+            ]
+        )
 
 
 async def main():
