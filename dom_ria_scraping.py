@@ -1,7 +1,7 @@
 import asyncio
 import csv
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
@@ -85,6 +85,12 @@ def parse_single_flat(detailed_page_soup: BeautifulSoup, city: str, region: str,
     )
 
     return flat
+
+
+def get_detailed_links_from_one_page(flat_soup: BeautifulSoup) -> List[str]:
+    detailed_flat_pages_part_links = flat_soup.select(".realty-link")
+
+    return [urljoin(BASE_URL, link["href"]) for link in detailed_flat_pages_part_links]
 
 
 def write_titles_for_flats_csv() -> None:
