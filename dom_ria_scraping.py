@@ -2,6 +2,16 @@ import asyncio
 import csv
 from dataclasses import dataclass
 from typing import Optional
+from urllib.parse import urljoin
+
+BASE_URL = "https://dom.ria.com/uk"
+URL = urljoin(BASE_URL, "/prodazha-kvartir/")
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/58.0.3029.110 Safari/537.3",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 
 @dataclass
