@@ -180,7 +180,7 @@ def get_extra_info(soup: BeautifulSoup) -> dict:
 
 
 def write_titles_for_flats_csv() -> None:
-    with open("test.csv", mode="w", newline="", encoding="utf-8") as file:
+    with open("flats.csv", mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow(
             [
@@ -200,7 +200,7 @@ def write_titles_for_flats_csv() -> None:
 
 
 def write_one_page_flats_to_csv(flats: List[Flat]) -> None:
-    with open("test.csv", mode="a", newline="", encoding="utf-8") as file:
+    with open("flats.csv", mode="a", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         for flat in flats:
             writer.writerow(
