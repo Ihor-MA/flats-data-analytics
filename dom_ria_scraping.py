@@ -219,6 +219,26 @@ def write_one_page_flats_to_csv(flats: List[Flat]) -> None:
             )
 
 
+async def write_all_flats_to_csv(start_page: int, end_page: int) -> None:
+    async with httpx.AsyncClient(
+        timeout=10, headers=headers, follow_redirects=True
+    ) as client:
+        num_pages = await get_num_pages(client)
+
+        for num_page in range(start_page, end_page + 1):
+            page = await get_response_with_retry(
+                client, URL, retries=3, params={"page": num_page}
+            )
+            if page.status_code == 200:
+                flat_soup = BeautifulSoup(page.content, "html.parser")
+                extra_info = get_extra_info(flat_soup)
+                flats_on_page = await get_one_page_flats(flat_soup, extra_info)
+                write_one_page_flats_to_csv(flats_on_page)
+                num_page += 1
+            else:
+                continue
+
+
 async def main():
     start_page = 1
     end_page = 3
