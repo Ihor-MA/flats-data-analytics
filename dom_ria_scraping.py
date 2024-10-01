@@ -1,4 +1,21 @@
 import asyncio
+from dataclasses import dataclass
+from typing import Optional
+
+
+@dataclass
+class Flat:
+    city: str
+    price: str
+    price_for_square_metre: str
+    total_area: str
+    floor: str
+    num_of_floors: int
+    num_of_rooms: int
+    address: str
+    region: Optional[str] = None
+    subway: Optional[str] = None
+    apartment_complex: Optional[str] = None
 
 
 async def main():
