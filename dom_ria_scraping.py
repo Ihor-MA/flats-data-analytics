@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Optional, List
 from urllib.parse import urljoin
 
+import httpx
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://dom.ria.com/uk"
@@ -91,6 +92,22 @@ def get_detailed_links_from_one_page(flat_soup: BeautifulSoup) -> List[str]:
     detailed_flat_pages_part_links = flat_soup.select(".realty-link")
 
     return [urljoin(BASE_URL, link["href"]) for link in detailed_flat_pages_part_links]
+
+
+async def get_response_with_retry(
+    client: httpx.AsyncClient, url: str, retries: int = 6, params: dict = None
+) -> httpx.Response:
+    for attempt in range(retries):
+        try:
+            response = await client.get(url, params=params)
+            response.raise_for_status()
+            return response
+        except httpx.HTTPStatusError as e:
+            print(f"HTTP error on attempt {attempt + 1}: {e}")
+        except httpx.RequestError as e:
+            print(f"Request error on attempt {attempt + 1}: {e}")
+        await asyncio.sleep(2**attempt)
+    return httpx.Response(status_code=503)
 
 
 def write_titles_for_flats_csv() -> None:
