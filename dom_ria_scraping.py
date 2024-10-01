@@ -1,5 +1,6 @@
 import asyncio
 import csv
+import logging
 from dataclasses import dataclass
 from typing import Optional, List
 from urllib.parse import urljoin
@@ -113,9 +114,9 @@ async def get_response_with_retry(
             response.raise_for_status()
             return response
         except httpx.HTTPStatusError as e:
-            print(f"HTTP error on attempt {attempt + 1}: {e}")
+            logging.error(f"HTTP error on attempt {attempt + 1}: {e}")
         except httpx.RequestError as e:
-            print(f"Request error on attempt {attempt + 1}: {e}")
+            logging.error(f"Request error on attempt {attempt + 1}: {e}")
         await asyncio.sleep(2**attempt)
     return httpx.Response(status_code=503)
 
@@ -241,7 +242,7 @@ async def write_all_flats_to_csv(start_page: int, end_page: int) -> None:
 
 async def main():
     start_page = 1
-    end_page = 3
+    end_page = 2
     if start_page == 1:
         write_titles_for_flats_csv()
     await write_all_flats_to_csv(start_page, end_page)
