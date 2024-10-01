@@ -198,6 +198,27 @@ def write_titles_for_flats_csv() -> None:
         )
 
 
+def write_one_page_flats_to_csv(flats: List[Flat]) -> None:
+    with open("test.csv", mode="a", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        for flat in flats:
+            writer.writerow(
+                [
+                    flat.city,
+                    flat.region,
+                    flat.address,
+                    flat.price,
+                    flat.price_for_square_metre,
+                    flat.total_area,
+                    flat.floor,
+                    flat.num_of_floors,
+                    flat.num_of_rooms,
+                    flat.subway,
+                    flat.apartment_complex,
+                ]
+            )
+
+
 async def main():
     start_page = 1
     end_page = 3
